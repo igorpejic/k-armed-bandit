@@ -2,19 +2,9 @@ import numpy as np
 import math
 
 def normpdf(x, mean, sd, steps):
-    var = float(sd)**2
     pi = 3.1415926
-    denom = (2*pi*var)**.5
-    # num = math.exp(-(float(x)-float(mean))**2/(2*var))
     res =  (1 / math.sqrt(2 * pi * sd * sd)) * math.exp(-((x - mean) * (x - mean)) / (2 * sd * sd))
     return res
-
-def normpdf1(x, mean, sd, steps):
-    var = float(sd)**2
-    pi = 3.1415926
-    denom = (2*pi*var)**.5
-    num = math.exp(-(float(x)-float(mean))**2/(2*var))
-    # res =  (1 / math.sqrt(2 * pi * sd * sd)) * math.exp(-((x - mean) * (x - mean)) / (2 * sd * sd))
     return num /denom
 
 def kl(p, q):
@@ -36,8 +26,8 @@ def kl_extracted_forumla_1(mu, sigma, ni, tau, steps):
 mu = 0.3
 sigma =  0.3
 
-steps = 1000
-p = np.array([normpdf1(x, mu, sigma, steps) for x in np.linspace(-100, 100, steps)])
+steps = 400
+p = np.array([normpdf(x, mu, sigma, steps) for x in np.linspace(-100, 100, steps)])
 p = p / sum(p)
 
 ni = 0.1
