@@ -21,16 +21,15 @@ def kl_extracted_forumla(mu, sigma, ni, tau, steps):
 def kl_extracted_forumla_1(mu, sigma, ni, tau, steps):
     return 0.5 * (math.log((tau*tau)/(sigma*sigma)) -1 + (sigma*sigma + (mu - ni)**2) / (tau * tau))
 
-mu = 0.1
+mu = 0
 sigma =  0.3
 
-steps = 100
-p = [normpdf(x, mu, sigma, steps) for x in np.linspace(-3 * sigma + mu, 3 * sigma + mu, steps)]
-print(p)
+steps = 10000
+p = [normpdf(x, mu, sigma, steps) for x in np.linspace(-3 * sigma, 3 * sigma, steps)]
 
-ni = 0.1
-tau = 0.4
-q = [normpdf(x, ni, tau, steps) for x in np.linspace(-3 * tau + ni, 3 * tau + ni, steps)]
+ni = 0
+tau = 0.31
+q = [normpdf(x, ni, tau, steps) for x in np.linspace(-3 * tau, 3 * tau, steps)]
 
 print(kl(p, q))
 print(kl_extracted_forumla_1(mu, sigma, ni, tau, steps))
