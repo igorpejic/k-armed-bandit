@@ -1,18 +1,21 @@
 import numpy as np
 import math
+import matplotlib.pyplot as plt 
 
 def normpdf(x, mean, sd, steps):
-    var = float(sd)**2
     pi = 3.1415926
-    denom = (2*pi*var)**.5
-    # num = math.exp(-(float(x)-float(mean))**2/(2*var))
     res =  (1 / math.sqrt(2 * pi * sd * sd)) * math.exp(-((x - mean) * (x - mean)) / (2 * sd * sd))
-    return res / steps
+    return res
+    return num /denom
 
 def kl(p, q):
     sum = 0
     for i in range(len(p)):
-        sum += p[i] * math.log(p[i] / q[i])
+        if p[i] == 0:
+            continue
+        if q[i] == 0:
+            continue
+        sum += (p[i] * math.log(p[i] / q[i]))
     return sum
 
 def kl_extracted_forumla(mu, sigma, ni, tau, steps):
@@ -21,17 +24,29 @@ def kl_extracted_forumla(mu, sigma, ni, tau, steps):
 def kl_extracted_forumla_1(mu, sigma, ni, tau, steps):
     return 0.5 * (math.log((tau*tau)/(sigma*sigma)) -1 + (sigma*sigma + (mu - ni)**2) / (tau * tau))
 
-mu = 0
-sigma =  0.3
+mu = 0.3
+sigma =  0.4
 
-steps = 10000
-p = [normpdf(x, mu, sigma, steps) for x in np.linspace(-3 * sigma, 3 * sigma, steps)]
+monte_carlo_success_rate = np.array([])
+for i in range(1, 2000):
+    steps = i
+    p = np.array([normpdf(x, mu, sigma, steps) for x in np.linspace(-100, 100, steps)])
+    p = p / sum(p)
 
-ni = 0
-tau = 0.31
-q = [normpdf(x, ni, tau, steps) for x in np.linspace(-3 * tau, 3 * tau, steps)]
+    ni = 0.1
+    tau = 0.2
+    q = np.array([normpdf(x, ni, tau, steps) for x in np.linspace(-100, 100, steps)])
+    q = q / sum(q)
 
-print(kl(p, q))
-print(kl_extracted_forumla_1(mu, sigma, ni, tau, steps))
-print(kl_extracted_forumla(mu, sigma, ni, tau, steps))
+    mc_kl = kl(p, q)
+    kl_from_formula = (kl_extracted_forumla_1(mu, sigma, ni, tau, steps))
+    #print(kl_from_formula)
+    #print(mc_kl)
 
+    monte_carlo_success_rate = np.append(monte_carlo_success_rate, mc_kl/kl_from_formula)
+
+plt.plot(monte_carlo_success_rate)
+plt.title('Ratio of Monte-Carlo obtained KL value vs KL value obtained by definition')
+plt.xlabel('Monte-Carlo steps')
+plt.ylabel('Monte-Carlo value / formula value')
+plt.show()
